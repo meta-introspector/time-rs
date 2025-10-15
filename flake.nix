@@ -4,14 +4,15 @@
   inputs = {
     nixpkgs.url = "github:meta-introspector/nixpkgs?ref=feature/CRQ-016-nixify";
     cargo2nix.url = "github:meta-introspector/cargo2nix?ref=feature/CRQ-016-nixify"; # Assuming this is the correct cargo2nix flake
+    flake-utils.url = "github:meta-introspector/flake-utils?ref=feature/CRQ-016-nixify"; # Add flake-utils input
   };
 
-  outputs = { self, nixpkgs, cargo2nix }: 
+  outputs = { self, nixpkgs, cargo2nix, flake-utils }: 
     let
       systems = [ "aarch64-linux" ];
       timeRsOverlay = import ./overlay.nix; # Import the new overlay
     in
-    nixpkgs.lib.eachSystem systems (system:
+    flake-utils.lib.eachDefaultSystem systems (system:
       let
         pkgs = import nixpkgs {
           inherit system;
