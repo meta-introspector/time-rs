@@ -25,6 +25,6 @@
     in
     {
       packages.aarch64-linux.time-macros = rustPkgs.workspace.time-macros;
-      defaultPackage.aarch64-linux = self.packages.aarch64-linux.time-macros;
+      defaultPackage.aarch64-linux = self.packages.aarch64-linux.time-macros { };
     };
 }
