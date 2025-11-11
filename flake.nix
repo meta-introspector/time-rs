@@ -6,7 +6,7 @@
     #cargo2nix.url = "path:/data/data/com.termux.nix/files/home/pick-up-nix2/vendor/nix/cargo2nix";
     cargo2nix.url = "github:meta-introspector/cargo2nix?ref=feature/CRQ-016-nixify";
     flake-utils.url = "github:meta-introspector/flake-utils?ref=feature/CRQ-016-nixify";
-    time-macros.url = "github:meta-introspector/time-rs?ref=feature/CRQ-016-nixify";
+#    time-macros.url = "github:meta-introspector/time-rs?ref=feature/CRQ-016-nixify";
   };
 
   outputs = { self, nixpkgs, cargo2nix, flake-utils }: 
