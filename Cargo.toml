@@ -131,3 +131,7 @@ incompatible-msrv = { level = "allow", priority = 1 }      # rust-lang/rust-clip
 [workspace.lints.rustdoc]
 private-doc-tests = "warn"
 unescaped-backticks = "warn"
+
+
+[patch.crates-io]                                                                                                   
+time-macros = { git = "https://github.com/meta-introspector/time-rs", branch = "feature/CRQ-016-nixify" }
