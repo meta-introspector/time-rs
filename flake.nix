@@ -3,9 +3,9 @@
 
   inputs = {
     nixpkgs.url = "github:meta-introspector/nixpkgs?ref=feature/CRQ-016-nixify";
-    cargo2nix.url = "github:meta-introspector/cargo2nix?ref=feature/CRQ-016-nixify"; # Assuming this is the correct cargo2nix flake
+    cargo2nix.url = "path:/data/data/com.termux.nix/files/home/pick-up-nix2/vendor/nix/cargo2nix";
     flake-utils.url = "github:meta-introspector/flake-utils?ref=feature/CRQ-016-nixify"; # Add flake-utils input
-    time-macros = { url = "github:time-rs/time?dir=time-macros" };
+    time-macros = { url = "github:meta-introspector/time-rs?ref=feature/CRQ-016-nixify"; };;
   };
 
   outputs = { self, nixpkgs, cargo2nix, flake-utils }: 
