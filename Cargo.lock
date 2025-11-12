@@ -815,4 +815,4 @@ dependencies = [
 [[patch.unused]]
 name = "time-macros"
 version = "0.2.24"
-source = "git+https://github.com/meta-introspector/time-rs?branch=feature/CRQ-016-nixify#17e72df77190275d089eb16181b9b1438e32a640"
+source = "git+https://github.com/meta-introspector/time-rs?branch=feature/CRQ-016-nixify#fc540559c2a091744eb58947faa0b87493ca624b"
