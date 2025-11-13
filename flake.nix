@@ -1,64 +1,101 @@
 {
-  description = "A minimal development shell for a Rust project";
-
   inputs = {
     nixpkgs.url = "github:meta-introspector/nixpkgs?ref=feature/CRQ-016-nixify";
-    rust-overlay = {
-      url = "github:meta-introspector/rust-overlay?ref=feature/CRQ-016-nixify";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     flake-utils.url = "github:meta-introspector/flake-utils?ref=feature/CRQ-016-nixify";
-    # Assuming cargo2nix is available as an input, or we can reference it from the main project
-    cargo2nix-root.url = "path:../.."; # Relative path to the main cargo2nix project
+    cargo2nix.url = "github:cargo2nix/cargo2nix/release-0.12";
+    allocator-api2.url = "github:meta-introspector/allocator-api2?ref=feature/CRQ-016-nixify";
   };
 
-  outputs = { self, nixpkgs, rust-overlay, flake-utils, cargo2nix-root }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        overlays = [ (import rust-overlay) ];
-        pkgs = import nixpkgs {
-          inherit system overlays;
-          config.allowUnfree = true;
-        };
+  outputs = inputs: with inputs;
+    flake-utils.lib.eachDefaultSystem
+      (system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = [ cargo2nix.overlays.default ];
+            config = {
+              permittedInsecurePackages = [ "openssl-1.1.1w" ];
+            };
+          };
 
-        # Use the cargo2nix from the root project to generate the package set
-        cargo2nixPkgs = cargo2nix-root.packages.${system}.rustPkgs;
-        
-        # The name of the crate in this directory. This needs to be dynamic.
-        # For now, let's assume the crate name is the directory name.
-        # This might need adjustment if the Cargo.toml has a different name.
-        crateName = (builtins.baseNameOf (builtins.toString self)); # This will be the directory name
+          rustToolchain = pkgs.rust-bin.stable."1.81.0".default;
 
-        # Generate the Cargo.nix for this specific crate
-        # This assumes Cargo.nix is generated in the current directory
-        rustPkgs = pkgs.rustBuilder.makePackageSet {
-          packageFun = import ./Cargo.nix;
-          rustChannel = "nightly";
-          rustVersion = "latest";
-          # Add any specific package overrides if needed for submodules
-          # packageOverrides = pkgs: [
-          #   (pkgs.rustBuilder.rustLib.makeOverride {
-          #     name = "some-crate";
-          #     overrideAttrs = old: { ... };
-          #   })
-          # ];
-        };
+          rustPkgs = pkgs.rustBuilder.makePackageSet {
+            packageFun = import ./Cargo.nix;
+            rustChannel = "nightly"; # Reverting to nightly as stable didn't fix the issue and original used nightly
+            rustVersion = "latest";
+            rootFeatures = [
+              "time/std"
+              "time/alloc"
+              "time/formatting"
+              "time/parsing"
+              "time/serde"
+              "time/local-offset"
+              "time/wasm-bindgen"
+              "time/quickcheck"
+              "time/large-dates"
+              "time/serde-human-readable"
+              "time/macros"
+              "time/rand09"
+              "time/rand08"
+              "time-macros/large-dates"
+              "time-macros/formatting"
+              "time-macros/parsing"
+              "time-macros/serde"
+            ];
+            packageOverrides = pkgs: [
+              (pkgs.rustBuilder.rustLib.makeOverride {
+                name = "heapless";
+                overrideAttrs = old: {
+                  rustcBuildFlags = (old.rustcBuildFlags or [ ]) ++ [ "--allow=warnings" "--allow=dead_code" ];
+                };
+              })
+              (pkgs.rustBuilder.rustLib.makeOverride {
+                name = "allocator-api2";
+                overrideAttrs = old: {
+                  src = allocator-api2;
+                };
+              })
+              (pkgs.rustBuilder.rustLib.makeOverride {
+                name = "time-macros";
+                overrideAttrs = old: {
+                  features = [ "large-dates" "formatting" "parsing" "serde" ];
+                };
+              })
+              (pkgs.rustBuilder.rustLib.makeOverride {
+                name = "time";
+                overrideAttrs = old: {
+                  features = [ "std" "alloc" "formatting" "parsing" "serde" "local-offset" "wasm-bindgen" ];
+                };
+              })
+            ];
+          };
 
-      in
-      {
-        devShells.default = pkgs.mkShell {
-          buildInputs = with pkgs; [
-            rustc
-            cargo
-            openssl.dev
-            pkg-config
-          ];
-          shellHook = ''
-            export PKG_CONFIG_PATH=${pkgs.openssl.dev}/lib/pkgconfig:$PKG_CONFIG_PATH
-          '';
-        };
+          workspaceShell = pkgs.mkShell {
+            packages = [ pkgs.statix pkgs.openssl_1_1.dev ];
+            shellHook = ''
+              export PKG_CONFIG_PATH=${pkgs.openssl_1_1.dev}/lib/pkgconfig:$PKG_CONFIG_PATH
+              export PATH=${rustToolchain}/bin:$PATH
+            '';
+          };
 
-        packages.default = rustPkgs.workspace.${crateName} or rustPkgs.unknown.${crateName}."0.1.0" or rustPkgs.unknown.${crateName}."*" or (throw "Could not find crate ${crateName} in Cargo.nix");
-      }
-    );
+        in
+        rec {
+          devShells = {
+            default = workspaceShell;
+          };
+
+          packages = rec {
+            time = rustPkgs.workspace.time { };
+            timeMacros = rustPkgs.workspace.time-macros { };
+            workspaceCrates = rustPkgs.workspace;
+            default = time;
+          };
+
+          apps = rec {
+            time = { type = "app"; program = "${packages.time}/bin/time"; };
+            default = time;
+          };
+        }
+      );
 }
