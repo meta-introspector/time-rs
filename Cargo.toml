@@ -133,5 +133,5 @@ private-doc-tests = "warn"
 unescaped-backticks = "warn"
 
 
-[patch.crates-io]                                                                                                   
-time-macros = { git = "https://github.com/meta-introspector/time-rs", branch = "feature/CRQ-016-nixify" }
+[package.metadata.cargo2nix]
+cargo2nix_path = "/data/data/com.termux.nix/files/home/pick-up-nix2/vendor/rust/cargo2nix/target/debug/cargo2nix"
