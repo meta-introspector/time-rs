@@ -115,10 +115,10 @@ pub mod parsing;
 mod primitive_date_time;
 #[cfg(feature = "quickcheck")]
 mod quickcheck;
-#[cfg(feature = "rand08")]
-mod rand08;
-#[cfg(feature = "rand09")]
-mod rand09;
+// #[cfg(feature = "rand08")]
+// mod rand08;
+// #[cfg(feature = "rand09")]
+// mod rand09;
 #[cfg(feature = "serde")]
 pub mod serde;
 mod sys;

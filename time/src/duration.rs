@@ -1488,7 +1488,7 @@ macro_rules! duration_mul_div_int {
             fn mul(self, rhs: $type) -> Self::Output {
                 Self::nanoseconds_i128(
                     self.whole_nanoseconds()
-                        .checked_mul(rhs.cast_signed().extend::<i128>())
+                        .checked_mul(rhs as i128)
                         .expect("overflow when multiplying duration")
                 )
             }
@@ -1511,7 +1511,7 @@ macro_rules! duration_mul_div_int {
             #[track_caller]
             fn div(self, rhs: $type) -> Self::Output {
                 Self::nanoseconds_i128(
-                    self.whole_nanoseconds() / rhs.cast_signed().extend::<i128>()
+                    self.whole_nanoseconds() / (rhs as i128)
                 )
             }
         }

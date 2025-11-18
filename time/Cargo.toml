@@ -3,7 +3,7 @@ name = "time"
 version = "0.3.44"
 authors = ["Jacob Pratt <open-source@jhpratt.dev>", "Time contributors"]
 edition = "2021"
-rust-version = "1.81.0"
+# rust-version = "1.81.0"
 repository = "https://github.com/time-rs/time"
 homepage = "https://time-rs.github.io"
 keywords = ["date", "time", "calendar", "duration"]
@@ -38,9 +38,8 @@ local-offset = ["std", "dep:libc", "dep:num_threads"]
 macros = ["dep:time-macros"]
 parsing = ["time-macros?/parsing"]
 quickcheck = ["dep:quickcheck", "alloc", "deranged/quickcheck"]
-rand = ["rand08", "rand09"]
-rand08 = ["dep:rand08", "deranged/rand08"]
-rand09 = ["dep:rand09", "deranged/rand09"]
+#rand = ["rand08"]
+#rand08 = ["dep:rand08", "deranged/rand08"]
 serde = ["dep:serde_core", "time-macros?/serde", "deranged/serde"]
 serde-human-readable = ["serde", "formatting", "parsing"]
 # Deprecated in favor of using the relevant flags directly.
@@ -51,16 +50,26 @@ wasm-bindgen = ["dep:js-sys"]
 # If adding an optional dependency, be sure to use the `dep:` prefix above to avoid an implicit
 # feature gate.
 [dependencies]
-deranged = { workspace = true }
-itoa = { workspace = true, optional = true }
-num-conv = { workspace = true }
-powerfmt = { workspace = true }
-quickcheck = { workspace = true, optional = true }
-rand08 = { workspace = true, optional = true }
-rand09 = { workspace = true, optional = true }
-serde_core = { workspace = true, optional = true }
-time-core = { workspace = true }
-time-macros = { workspace = true, optional = true }
+deranged = { path = "/data/data/com.termux.nix/files/home/pick-up-nix2/vendor/rust/cargo2nix/submodules/deranged/deranged" }
+deranged-macros = { path = "/data/data/com.termux.nix/files/home/pick-up-nix2/vendor/rust/cargo2nix/submodules/deranged/deranged-macros" }
+itoa = { path = "/data/data/com.termux.nix/files/home/pick-up-nix2/vendor/rust/cargo2nix/submodules/itoa" , optional = true }
+#num-conv = { workspace = true }
+num-conv = { path = "/data/data/com.termux.nix/files/home/pick-up-nix2/vendor/rust/cargo2nix/submodules/num-conv" }
+powerfmt = { path = "/data/data/com.termux.nix/files/home/pick-up-nix2/vendor/rust/cargo2nix/submodules/powerfmt/powerfmt" }
+powerfmt-macros = { path = "/data/data/com.termux.nix/files/home/pick-up-nix2/vendor/rust/cargo2nix/submodules/powerfmt/powerfmt-macros" }
+#quickcheck = { workspace = true, optional = true }
+quickcheck = { path = "/data/data/com.termux.nix/files/home/pick-up-nix2/vendor/rust/cargo2nix/submodules/quickcheck" , optional = true }
+#rand08 = { workspace = true, optional = true }
+#rand09 = { workspace = true, optional = true }
+#rand08 = { path = "/data/data/com.termux.nix/files/home/pick-up-nix2/vendor/rust/cargo2nix/submodules/rand", optional = true }
+#rand09 = { path = "/data/data/com.termux.nix/files/home/pick-up-nix2/vendor/rust/cargo2nix/submodules/rand" }
+#serde_core = { workspace = true, optional = true }
+serde_core = { path = "/data/data/com.termux.nix/files/home/pick-up-nix2/vendor/rust/cargo2nix/submodules/serde/serde_core" , default-features = false, optional = true }
+#time-core = { workspace = true }
+time-core = { path = "/data/data/com.termux.nix/files/home/pick-up-nix2/vendor/rust/cargo2nix/submodules/time-rs/time-core" }
+#time-macros = { workspace = true, optional = true }
+time-macros = { path = "/data/data/com.termux.nix/files/home/pick-up-nix2/vendor/rust/cargo2nix/submodules/time-rs/time-macros", optional = true }
+
 
 [target.'cfg(target_family = "unix")'.dependencies]
 libc = { workspace = true, optional = true }
@@ -71,8 +80,6 @@ js-sys = { workspace = true, optional = true }
 
 [dev-dependencies]
 num-conv = { workspace = true }
-rand08 = { workspace = true }
-rand09 = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 serde_test = { workspace = true }
