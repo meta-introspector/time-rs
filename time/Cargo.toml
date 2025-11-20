@@ -67,8 +67,8 @@ quickcheck = { path = "/data/data/com.termux.nix/files/home/pick-up-nix2/vendor/
 serde_core = { path = "/data/data/com.termux.nix/files/home/pick-up-nix2/vendor/rust/cargo2nix/submodules/serde/serde_core" , default-features = false, optional = true }
 #time-core = { workspace = true }
 time-core = { path = "/data/data/com.termux.nix/files/home/pick-up-nix2/vendor/rust/cargo2nix/submodules/time-rs/time-core" }
-#time-macros = { workspace = true, optional = true }
-time-macros = { path = "/data/data/com.termux.nix/files/home/pick-up-nix2/vendor/rust/cargo2nix/submodules/time-rs/time-macros", optional = true }
+time-macros = { workspace = true, optional = true }
+#time-macros = { path = "/data/data/com.termux.nix/files/home/pick-up-nix2/vendor/rust/cargo2nix/submodules/time-rs/time-macros", optional = true }
 
 
 [target.'cfg(target_family = "unix")'.dependencies]
